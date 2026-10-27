@@ -1,0 +1,67 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "KPN TV",
+        "description": "Choose the remote entity of your KPN TV+ Box. Pair the box with the Android TV Remote integration first.",
+        "data": {
+          "name": "Name",
+          "remote_entity": "Remote entity of the box"
+        }
+      }
+    },
+    "error": {
+      "remote_not_found": "This entity does not exist."
+    },
+    "abort": {
+      "already_configured": "This box is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Channels and timing",
+        "description": "One channel per line as `Name = number`. Lines starting with # are ignored.",
+        "data": {
+          "channels": "Channel list",
+          "key_delay": "Pause between digits",
+          "boot_delay": "Wait after switching on",
+          "send_enter": "Press OK after the digits",
+          "adb_entity": "ADB entity (optional, for what's playing)",
+          "poll_interval": "Read what's playing every"
+        },
+        "data_description": {
+          "key_delay": "Increase if the box misses digits.",
+          "boot_delay": "Time the box needs after power-on before it accepts digits.",
+          "send_enter": "Only needed if the box does not switch by itself.",
+          "adb_entity": "Media player of the Android Debug Bridge integration for this box. Shows channel, programme and description, read from the box's log.",
+          "poll_interval": "How often the box's log is read."
+        }
+      }
+    },
+    "error": {
+      "invalid_channels": "Invalid line, use `Name = number` without duplicates. {line}",
+      "no_channels": "Add at least one channel."
+    }
+  },
+  "services": {
+    "play_channel": {
+      "name": "Play channel",
+      "description": "Switch the KPN TV+ Box to a channel by name or number. Turns the box on first if needed.",
+      "fields": {
+        "channel": {
+          "name": "Channel",
+          "description": "Name from the channel list (e.g. NPO 1) or a channel number."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_channel": {
+      "message": "Channel '{channel}' is not in the channel list and is not a number."
+    },
+    "unsupported_media_type": {
+      "message": "Only media_content_type 'channel' is supported, not '{media_type}'."
+    }
+  }
+}

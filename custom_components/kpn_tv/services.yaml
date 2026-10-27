@@ -1,0 +1,11 @@
+play_channel:
+  target:
+    entity:
+      integration: kpn_tv
+      domain: media_player
+  fields:
+    channel:
+      required: true
+      example: "NPO 1"
+      selector:
+        text:

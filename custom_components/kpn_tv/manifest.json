@@ -1,0 +1,14 @@
+{
+  "domain": "kpn_tv",
+  "name": "KPN TV",
+  "after_dependencies": ["androidtv_remote", "remote"],
+  "codeowners": ["@JerryVerhoef"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/JerryVerhoef/ha-kpn-tv",
+  "integration_type": "device",
+  "iot_class": "assumed_state",
+  "issue_tracker": "https://github.com/JerryVerhoef/ha-kpn-tv/issues",
+  "requirements": [],
+  "version": "0.2.0"
+}

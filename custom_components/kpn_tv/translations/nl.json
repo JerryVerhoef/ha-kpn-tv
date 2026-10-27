@@ -1,0 +1,67 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "KPN TV",
+        "description": "Kies de remote-entity van je KPN TV+ Box. Koppel de box eerst met de integratie Android TV Remote.",
+        "data": {
+          "name": "Naam",
+          "remote_entity": "Remote-entity van de box"
+        }
+      }
+    },
+    "error": {
+      "remote_not_found": "Deze entity bestaat niet."
+    },
+    "abort": {
+      "already_configured": "Deze box is al ingesteld."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Zenders en timing",
+        "description": "Eén zender per regel als `Naam = nummer`. Regels die met # beginnen worden overgeslagen.",
+        "data": {
+          "channels": "Zenderlijst",
+          "key_delay": "Pauze tussen cijfers",
+          "boot_delay": "Wachten na aanzetten",
+          "send_enter": "Na de cijfers op OK drukken",
+          "adb_entity": "ADB-entity (optioneel, voor wat er speelt)",
+          "poll_interval": "Lees wat er speelt elke"
+        },
+        "data_description": {
+          "key_delay": "Verhogen als de box cijfers mist.",
+          "boot_delay": "Tijd die de box na het aanzetten nodig heeft voordat hij cijfers accepteert.",
+          "send_enter": "Alleen nodig als de box niet vanzelf omschakelt.",
+          "adb_entity": "Media player van de Android Debug Bridge-integratie voor deze box. Toont zender, programma en beschrijving, uitgelezen uit het log van de box.",
+          "poll_interval": "Hoe vaak het log van de box wordt gelezen."
+        }
+      }
+    },
+    "error": {
+      "invalid_channels": "Ongeldige regel, gebruik `Naam = nummer` zonder dubbele namen. {line}",
+      "no_channels": "Voeg minstens één zender toe."
+    }
+  },
+  "services": {
+    "play_channel": {
+      "name": "Zender kiezen",
+      "description": "Zet de KPN TV+ Box op een zender, op naam of nummer. Zet de box zo nodig eerst aan.",
+      "fields": {
+        "channel": {
+          "name": "Zender",
+          "description": "Naam uit de zenderlijst (bijv. NPO 1) of een kanaalnummer."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_channel": {
+      "message": "Zender '{channel}' staat niet in de zenderlijst en is geen nummer."
+    },
+    "unsupported_media_type": {
+      "message": "Alleen media_content_type 'channel' wordt ondersteund, niet '{media_type}'."
+    }
+  }
+}
