@@ -116,8 +116,12 @@ class KpnTvConfigFlow(ConfigFlow, domain=DOMAIN):
         schema = vol.Schema(
             {
                 vol.Required(CONF_NAME, default=DEFAULT_NAME): str,
+                # Alleen de remote van Android TV Remote: de ADB-integratie maakt
+                # voor dezelfde box ook een remote aan, maar die werkt hier niet.
                 vol.Required(CONF_REMOTE): selector.EntitySelector(
-                    selector.EntitySelectorConfig(domain="remote")
+                    selector.EntitySelectorConfig(
+                        domain="remote", integration="androidtv_remote"
+                    )
                 ),
             }
         )
