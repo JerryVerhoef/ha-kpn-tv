@@ -1,0 +1,90 @@
+name: Test en release
+
+# Bij elke push naar main: tests draaien en daarna automatisch een
+# patch-release maken (v0.2.0 -> v0.2.1 -> ...).
+#
+# Grotere stap nodig (bijv. 0.3.0)? Zet die versie zelf in manifest.json;
+# de workflow brengt dan precies die versie uit in plaats van een patch.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Testafhankelijkheden installeren
+        run: pip install pytest-homeassistant-custom-component
+
+      - name: Tests
+        run: pytest -q
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Versie bepalen
+        id: version
+        run: |
+          manifest=custom_components/kpn_tv/manifest.json
+          current=$(jq -r .version "$manifest")
+          latest=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' | sed 's/^v//' | sort -V | tail -n1)
+
+          if [ -z "$latest" ]; then
+            # Nog geen releases: breng de versie uit manifest.json uit.
+            next="$current"
+          elif [ "$(printf '%s\n%s\n' "$latest" "$current" | sort -V | tail -n1)" = "$current" ] \
+               && [ "$current" != "$latest" ]; then
+            # Handmatig verhoogd in manifest.json: die versie aanhouden.
+            next="$current"
+          else
+            IFS=. read -r major minor patch <<< "$latest"
+            next="$major.$minor.$((patch + 1))"
+          fi
+
+          echo "Laatste release: ${latest:-geen}, manifest: $current, nieuw: $next"
+          echo "next=$next" >> "$GITHUB_OUTPUT"
+          echo "changed=$([ "$next" != "$current" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Versie in manifest.json bijwerken
+        if: steps.version.outputs.changed == 'true'
+        env:
+          NEXT: ${{ steps.version.outputs.next }}
+        run: |
+          manifest=custom_components/kpn_tv/manifest.json
+          jq --arg v "$NEXT" '.version = $v' "$manifest" > "$manifest.tmp"
+          mv "$manifest.tmp" "$manifest"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Versie $NEXT [skip ci]"
+          git push origin HEAD:main
+
+      - name: Release maken
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEXT: ${{ steps.version.outputs.next }}
+        run: |
+          gh release create "v$NEXT" \
+            --target "$(git rev-parse HEAD)" \
+            --title "v$NEXT" \
+            --generate-notes

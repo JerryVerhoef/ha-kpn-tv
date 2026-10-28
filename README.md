@@ -103,3 +103,9 @@ data: { source: RTL 4 }
 - **Verkeerde zender (cijfer gemist):** verhoog "Pauze tussen cijfers".
 - **Tv gaat niet mee aan:** zet HDMI-CEC aan op de box (Apparaatvoorkeuren → Weergave en geluid → HDMI CEC) én op de tv.
 - **Toetsenbord op het scherm weg** na het koppelen: dat komt door de Android TV Remote-koppeling, niet door deze integratie.
+
+## Releases
+
+Elke push naar `main` draait de tests en maakt daarna automatisch een patch-release (bijv. v0.2.1 → v0.2.2), zodat HACS een update meldt. Gaan de tests mis, dan komt er geen release.
+
+Een grotere stap (bijv. 0.3.0 of 1.0.0)? Zet die versie zelf in `custom_components/kpn_tv/manifest.json`; de workflow brengt dan precies die versie uit.
